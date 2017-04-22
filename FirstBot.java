@@ -7,13 +7,14 @@ import bwapi.*;
 import bwta.BWTA;
 import bwta.Region;
 
-public class FirstExamples extends DefaultBWListener {
+public class FirstBot extends DefaultBWListener {
 
 	Unit buildingSupply = null;
 	boolean buildingRefinery = false;
 	int workerOnRefinery = 0;
     Unit refinery = null;
     List<Building> buildorder = new ArrayList<Building>();
+    boolean buildingBarrack = false;
 	
     private Mirror mirror = new Mirror();
 
@@ -50,6 +51,29 @@ public class FirstExamples extends DefaultBWListener {
     		System.out.println("Neuer Supply!");
     		buildingSupply = unit;
     	}
+        
+    }
+    
+    @Override
+    public void onUnitMorph(Unit unit) {
+    	if (unit.getType().isBuilding() && unit.getBuildType() == getSelf().getRace().getRefinery())
+    	{
+    		System.out.println("Neue Refinery!");
+    		refinery = unit;
+    	}
+        if (unit.getType().isBuilding() && unit.getBuildType() == getSelf().getRace().getSupplyProvider())
+    	{
+    		System.out.println("Neuer Supply!");
+    		buildingSupply = unit;
+    	}
+    }
+    
+    @Override
+    public void onUnitComplete(Unit unit) {
+    	if (unit.getType().isBuilding() && unit.getBuildType() == UnitType.Buildings.Terran_Barracks)
+        {
+        	buildingBarrack = false;
+        }
     }
 
     @Override
@@ -63,12 +87,15 @@ public class FirstExamples extends DefaultBWListener {
         // Lässt es zu das der User Eingaben vornehmen kann
         getGame().enableFlag(1);
         // Eingabe von Cheats für schnelleres Bauen, viele Mineralien etc.
-        // Mache cheats werden von bwapi nicht erkannt, z.B "food for thought" usw.
+        // Mache cheats werden von bwapi nicht erkannt, z.B "food for thought" usw.   
 //    	getGame().sendText("show me the money"); // 10000 Mineralien 10000 Gas
 //    	getGame().sendText("operation cwal"); // schnelleres Bauen
 //    	getGame().sendText("black sheep wall"); // ganze karte sehen
 //    	getGame().sendText("power overwhelming"); // einheiten und gebäude unverwundbar
     	
+        
+        getGame().setLocalSpeed(10);
+        
         System.out.println("Analyzing map...");
         BWTA.readMap();
         BWTA.analyze();
@@ -76,15 +103,23 @@ public class FirstExamples extends DefaultBWListener {
         
         if(self.getRace() == Race.Terran)
         {
-	        buildorder.add(new Building(UnitType.Buildings.Terran_Barracks));
-	    	buildorder.add(new Building(UnitType.Buildings.Terran_Factory));
-	    	buildorder.add(new Building(UnitType.Buildings.Terran_Engineering_Bay));
+//	        buildorder.add(new Building(UnitType.Buildings.Terran_Barracks));
+//	        buildorder.add(new Building(UnitType.Buildings.Terran_Barracks));
+//	        buildorder.add(new Building(UnitType.Buildings.Terran_Barracks));
+//	        buildorder.add(new Building(UnitType.Buildings.Terran_Barracks));
+//	        buildorder.add(new Building(UnitType.Buildings.Terran_Barracks));
+//	    	buildorder.add(new Building(UnitType.Buildings.Terran_Factory));
+//	    	buildorder.add(new Building(UnitType.Buildings.Terran_Engineering_Bay));
 	    	
 	    	System.out.println("Buildorder erstellt!");
         }
         
     }
     
+    @Override
+    public void onEnd(boolean b) {
+    	System.exit(0);
+    }
     
 
     @Override
@@ -110,12 +145,24 @@ public class FirstExamples extends DefaultBWListener {
 	        	{
 	        		buildingSupply = null;
 	        	}
+	        	
+	        	
+	        	if ( vCurrentUnit.getType() == UnitType.Buildings.Terran_Barracks &&
+	        		 vCurrentUnit.isCompleted() &&	
+	               	 !vCurrentUnit.isTraining() &&
+	               	 getSelf().minerals() >= 50 
+	               	  
+        			) 
+	        	{
+	                   vCurrentUnit.train(UnitType.Terran_Marine);
+	            }
 	
 	            //if there's enough minerals, train a Worker if there are less than 50
 	        	if ( vWorkerCount < 50 && 
 	               	 vCurrentUnit.getType() == getSelf().getRace().getCenter() &&
 	               	 !vCurrentUnit.isTraining() &&
-	               	 getSelf().minerals() >= 50 ) {
+	               	 getSelf().minerals() >= 50 ) 
+	        	{
 	                   vCurrentUnit.train(getSelf().getRace().getWorker());
 	            }
 	        	
@@ -140,11 +187,20 @@ public class FirstExamples extends DefaultBWListener {
 	        		}
 	        	}
 	        	
+	        	if (getSelf().minerals() >= UnitType.Buildings.Terran_Barracks.mineralPrice() && buildingBarrack == false)
+	        	{
+	        		vCurrentUnit.build(UnitType.Buildings.Terran_Barracks, getBuildTile(vCurrentUnit, UnitType.Buildings.Terran_Barracks, vCurrentUnit.getTilePosition()));
+	        		buildingBarrack = true;
+	        	}
+	        	
+	        	
 	        	
 	            //if it's a worker and it's idle, send it to the closest mineral patch
-	            if (vCurrentUnit.getType().isWorker() && vCurrentUnit.isIdle() && !vCurrentUnit.isSelected())
+	            if (vCurrentUnit.getType().isWorker() && vCurrentUnit.isIdle() && !vCurrentUnit.isSelected() && vCurrentUnit.isCompleted())
 	            {
 	                Unit closestMineral = null;
+	                
+	                
 	                
 	                
 					//Wenn kein Supply vorhanden, baue.
@@ -152,10 +208,10 @@ public class FirstExamples extends DefaultBWListener {
 	                {
 	                	vCurrentUnit.build(getSelf().getRace().getSupplyProvider(),getBuildTile(vCurrentUnit, getSelf().getRace().getSupplyProvider(), vCurrentUnit.getTilePosition()));
 	                }
-	                else if(getSelf().gas() == 0 && getGame().elapsedTime() >= 100 && getSelf().minerals() >= getSelf().getRace().getRefinery().mineralPrice() && refinery == null && buildingRefinery == false)
+	                else if(getSelf().gas() == 0 && getGame().elapsedTime() >= 250 && getSelf().minerals() >= getSelf().getRace().getRefinery().mineralPrice() && refinery == null && buildingRefinery == false)
 	                {
 	                	buildingRefinery = vCurrentUnit.build(getSelf().getRace().getRefinery(),getBuildTile(vCurrentUnit, getSelf().getRace().getRefinery(), vCurrentUnit.getTilePosition()));
-	                }	                
+	                }	
 	                else
 	                {
 	                	//find the closest mineral
@@ -170,9 +226,10 @@ public class FirstExamples extends DefaultBWListener {
 		                    }
 		                }
 		
-		                
+		               
 		                if (refinery != null && refinery.isCompleted() && workerOnRefinery < 3)
 		                {
+		                	
 		                	vCurrentUnit.gather(refinery, false);
 		                	++workerOnRefinery;
 		                	System.out.println("Another unit works on the refinery! Total: " + workerOnRefinery);
@@ -186,7 +243,7 @@ public class FirstExamples extends DefaultBWListener {
 	            }
 	        }
         	
-        	drawBWAPIandBWTARegions();
+//        	drawBWAPIandBWTARegions();
 	    	 
         } catch( Exception vException ) {
        		vException.printStackTrace();
@@ -360,11 +417,14 @@ public class FirstExamples extends DefaultBWListener {
 		
 	}
 	
-	enum Action
+	class TaskController
 	{
-		
+		public void doBasicTasks()
+		{
+			
+		}
 	}
-    
+
 
     public static void main(String[] args) {
         new FirstExamples().run();
