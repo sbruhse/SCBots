@@ -141,7 +141,8 @@ public class FirstBot extends DefaultBWListener
  	        		++vMedicCount;
  	        	}
  	        }
-
+ 	        
+ 	        Attack.attack();
 
 	    	Build build;
 	    	//Editing Buildorder:
@@ -162,55 +163,55 @@ public class FirstBot extends DefaultBWListener
 	    		}
 	    	}
 
-	    	if (vAccademyCount < 1 && self.minerals() >= UnitType.Terran_Academy.mineralPrice()) {
-	    		//iterate over units to find a worker
-	    		for (Unit myUnit : self.getUnits()) {
-	    			if (myUnit.getType() == UnitType.Terran_SCV) {
-	    				//get a nice place to build a supply depot
-	    				TilePosition buildTile =
-	    					getBuildTile(myUnit, UnitType.Terran_Academy, self.getStartLocation());
-	    				//and, if found, send the worker to build it (and leave others alone - break;)
-	    				if (buildTile != null) {
-	    					myUnit.build(UnitType.Terran_Academy, buildTile);
-	    					break;
-	    				}
-	    			}
-	    		}
-	    	}
+//	    	if (vAccademyCount < 1 && self.minerals() >= UnitType.Terran_Academy.mineralPrice()) {
+//	    		//iterate over units to find a worker
+//	    		for (Unit myUnit : self.getUnits()) {
+//	    			if (myUnit.getType() == UnitType.Terran_SCV) {
+//	    				//get a nice place to build a supply depot
+//	    				TilePosition buildTile =
+//	    					getBuildTile(myUnit, UnitType.Terran_Academy, self.getStartLocation());
+//	    				//and, if found, send the worker to build it (and leave others alone - break;)
+//	    				if (buildTile != null) {
+//	    					myUnit.build(UnitType.Terran_Academy, buildTile);
+//	    					break;
+//	    				}
+//	    			}
+//	    		}
+//	    	}
+//
+//	    	if (vAccademyCount >= 1 && vBarracksCount > 2 && self.minerals() >= UnitType.Terran_Engineering_Bay.mineralPrice()) {
+//	    		//iterate over units to find a worker
+//	    		for (Unit myUnit : self.getUnits()) {
+//	    			if (myUnit.getType() == UnitType.Terran_SCV) {
+//	    				//get a nice place to build a supply depot
+//	    				TilePosition buildTile =
+//	    					getBuildTile(myUnit, UnitType.Terran_Engineering_Bay, self.getStartLocation());
+//	    				//and, if found, send the worker to build it (and leave others alone - break;)
+//	    				if (buildTile != null) {
+//	    					myUnit.build(UnitType.Terran_Engineering_Bay, buildTile);
+//	    					break;
+//	    				}
+//	    			}
+//	    		}
+//	    	}
+//
+//	    	if (vEngineeringBayCount >= 1 && self.minerals() >= UnitType.Terran_Missile_Turret.mineralPrice()) {
+//	    		//iterate over units to find a worker
+//	    		for (Unit myUnit : self.getUnits()) {
+//	    			if (myUnit.getType() == UnitType.Terran_SCV) {
+//	    				//get a nice place to build a supply depot
+//	    				TilePosition buildTile =
+//	    					getBuildTile(myUnit, UnitType.Terran_Missile_Turret, self.getStartLocation());
+//	    				//and, if found, send the worker to build it (and leave others alone - break;)
+//	    				if (buildTile != null) {
+//	    					myUnit.build(UnitType.Terran_Missile_Turret, buildTile);
+//	    					break;
+//	    				}
+//	    			}
+//	    		}
+//	    	}
 
-	    	if (vAccademyCount >= 1 && vBarracksCount > 2 && self.minerals() >= UnitType.Terran_Engineering_Bay.mineralPrice()) {
-	    		//iterate over units to find a worker
-	    		for (Unit myUnit : self.getUnits()) {
-	    			if (myUnit.getType() == UnitType.Terran_SCV) {
-	    				//get a nice place to build a supply depot
-	    				TilePosition buildTile =
-	    					getBuildTile(myUnit, UnitType.Terran_Engineering_Bay, self.getStartLocation());
-	    				//and, if found, send the worker to build it (and leave others alone - break;)
-	    				if (buildTile != null) {
-	    					myUnit.build(UnitType.Terran_Engineering_Bay, buildTile);
-	    					break;
-	    				}
-	    			}
-	    		}
-	    	}
-
-	    	if (vEngineeringBayCount >= 1 && self.minerals() >= UnitType.Terran_Missile_Turret.mineralPrice()) {
-	    		//iterate over units to find a worker
-	    		for (Unit myUnit : self.getUnits()) {
-	    			if (myUnit.getType() == UnitType.Terran_SCV) {
-	    				//get a nice place to build a supply depot
-	    				TilePosition buildTile =
-	    					getBuildTile(myUnit, UnitType.Terran_Missile_Turret, self.getStartLocation());
-	    				//and, if found, send the worker to build it (and leave others alone - break;)
-	    				if (buildTile != null) {
-	    					myUnit.build(UnitType.Terran_Missile_Turret, buildTile);
-	    					break;
-	    				}
-	    			}
-	    		}
-	    	}
-
-	    	if (vBarracksCount < 7 && self.minerals() >= UnitType.Terran_Barracks.mineralPrice()) {
+	    	if (vBarracksCount < 3 && self.minerals() >= UnitType.Terran_Barracks.mineralPrice()) {
 	    		//iterate over units to find a worker
 	    		for (Unit myUnit : self.getUnits()) {
 	    			if (myUnit.getType() == UnitType.Terran_SCV) {
