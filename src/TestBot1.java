@@ -113,7 +113,7 @@ public class TestBot1 extends DefaultBWListener {
 
         }
         if(!startOK&&workerCount > 20) startOK = true;
-        if (milCount > 30)
+        if (milCount > 10)
     	{
         	aggro = true;
     	}
@@ -142,7 +142,7 @@ public class TestBot1 extends DefaultBWListener {
                     myUnit.train(UnitType.Terran_SCV);
             		continue;
                 }
-                if (myUnit.getType() == UnitType.Terran_Barracks && !myUnit.isBeingConstructed() && workerCount > 28)
+                else if (myUnit.getType() == UnitType.Terran_Barracks && !myUnit.isBeingConstructed())
                 {
                     myUnit.train(UnitType.Terran_Marine);
             		continue;
@@ -164,7 +164,7 @@ public class TestBot1 extends DefaultBWListener {
             	if((self.supplyTotal() - self.supplyUsed() <= 3) && (self.minerals() >= 100))
             	{
             		buildStuff(myUnit, UnitType.Buildings.Terran_Supply_Depot);
-            		continue;
+//            		continue;
             	}
             	else if(startOK)
             	{
@@ -172,19 +172,19 @@ public class TestBot1 extends DefaultBWListener {
                 	if(barCount <5 && self.minerals() >= 150)
                 	{
                 		buildStuff(myUnit, UnitType.Buildings.Terran_Barracks);
-                		continue;
+//                		continue;
                 	}
                 	// build engineering bay
                 	else if(engCount < 1 && self.minerals() >= 125)
                 	{
                 		buildStuff(myUnit, UnitType.Buildings.Terran_Engineering_Bay);
-                		continue;
+//                		continue;
                 	}
                 	// build missile launchers
                 	else if(engCount > 0 && defCount < 5 && self.minerals() >= 75)
                 	{
                 		buildStuff(myUnit, UnitType.Buildings.Terran_Missile_Turret);
-                		continue;
+//                		continue;
                 	}
             		//default: go mine
             	}
