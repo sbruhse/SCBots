@@ -9,9 +9,19 @@ public class TestBot1 extends DefaultBWListener {
     private Mirror mirror = new Mirror();
     Unit buildSupply;
 
-    private Game game;
+    static private Game game;
+    static public Game getGame(){
+    	synchronized (game) {
+    		return game;
+		}
+    }
 
-    private Player self;
+    static private Player self;
+    static public Player getSelf(){
+    	synchronized (self) {
+    		return self;
+		}
+    }
     
     private Boolean aggro = false;
     private TilePosition enemyBase;
