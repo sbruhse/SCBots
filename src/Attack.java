@@ -41,13 +41,13 @@ public class Attack
 		int vCounter = 0;
 		for(Unit vUnit : FirstBot.getSelf().getUnits())
 		{
-			if(vUnit.isIdle() && !vUnit.getType().isWorker() && vUnit.canAttack())
+			if(vUnit.isIdle() && !vUnit.getType().isWorker() && vUnit.canAttack() && FirstBot.getSelf().getStartLocation().getDistance(vUnit.getTilePosition()) <= 10)
 			{
 				++vCounter;
 			}
 		}
 		
-		if (vCounter < 10)
+		if (vCounter < 13)
 		{
 			return;
 		}

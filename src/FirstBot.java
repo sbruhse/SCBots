@@ -91,6 +91,7 @@ public class FirstBot extends DefaultBWListener
 
     }
 
+        
     @Override
     public void onUnitDiscover(Unit unit)
     {
@@ -147,7 +148,7 @@ public class FirstBot extends DefaultBWListener
 	    	Build build;
 	    	//Editing Buildorder:
 	        //Supply
-	    	if ((self.supplyTotal() - self.supplyUsed() < 4) && (self.minerals() >= 100)) {
+	    	if ((self.supplyTotal() - self.supplyUsed() < 3) && (self.minerals() >= 100)) {
 	    		//iterate over units to find a worker
 	    		for (Unit myUnit : self.getUnits()) {
 	    			if (myUnit.getType() == UnitType.Terran_SCV) {
