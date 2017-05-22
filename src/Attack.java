@@ -1,11 +1,16 @@
+import java.util.List;
+
 import bwapi.Position;
 import bwapi.Unit;
 import bwta.BWTA;
 import bwta.BaseLocation;
 
+
+
 public class Attack 
 {
-	public static void attack()
+	
+	public static void attack(List<Unit> enemyBuildings)
 	{
 		Position vPosition = Position.Invalid;
 		for( Unit vUnit : FirstBot.getSelf().getUnits())
@@ -47,16 +52,23 @@ public class Attack
 			}
 		}
 		
-		if (vCounter < 13)
+		if (vCounter < 10)
 		{
 			return;
 		}
 		
 		for(Unit vUnit : FirstBot.getSelf().getUnits())
 		{
-			if(vUnit.isIdle() && !vUnit.getType().isWorker() && vUnit.canAttack() && vPosition != Position.Invalid)
+		
+			if(vUnit.isIdle() && !vUnit.getType().isWorker() && vUnit.canAttack())
 			{
-				vUnit.attack(vPosition);
+				if(enemyBuildings.isEmpty() && vPosition != Position.Invalid)
+				{
+					vUnit.attack(vPosition);
+					return;
+				}
+				vUnit.attack(enemyBuildings.get(0));
+				
 			}
 		}
 	}
