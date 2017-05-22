@@ -112,11 +112,9 @@ public class TestBot1 extends DefaultBWListener {
         	}
 
         }
+        
+        if(milCount>9)attack();
         if(!startOK&&workerCount > 20) startOK = true;
-        if (milCount > 10)
-    	{
-        	aggro = true;
-    	}
 
         //iterate through my units
         for (Unit myUnit : self.getUnits()) 
@@ -124,7 +122,8 @@ public class TestBot1 extends DefaultBWListener {
         	if(cmdCount==0&&myUnit.getType().isWorker())
         	{
         		buildStuff(myUnit, UnitType.Terran_Command_Center);
-        		continue;
+        		cmdCount++;
+        		//continue;
         	}
 //        	if((self.supplyTotal() <= self.supplyUsed()) && (self.minerals() >= 100) && myUnit.getType().isWorker())
 //        	{
@@ -140,22 +139,13 @@ public class TestBot1 extends DefaultBWListener {
                 if (myUnit.getType() == UnitType.Terran_Command_Center && self.minerals() >= 50 && workerCount < 80) 
                 {
                     myUnit.train(UnitType.Terran_SCV);
-            		continue;
                 }
                 else if (myUnit.getType() == UnitType.Terran_Barracks && !myUnit.isBeingConstructed())
                 {
                     myUnit.train(UnitType.Terran_Marine);
-            		continue;
                 }
         	}
         	
-        	if(aggro&&myUnit.getType() == UnitType.Terran_Marine&&myUnit.isIdle())
-        	{
-        		//myUnit.attack(enemyBase.toPosition());
-        		myUnit.move(enemyBase.toPosition());
-        	}
-            
-            
             // idling workers
             
             if(myUnit.getType().isWorker()&&myUnit.isIdle())
@@ -172,18 +162,21 @@ public class TestBot1 extends DefaultBWListener {
                 	if(barCount <5 && self.minerals() >= 150)
                 	{
                 		buildStuff(myUnit, UnitType.Buildings.Terran_Barracks);
+                		barCount++;
 //                		continue;
                 	}
                 	// build engineering bay
                 	else if(engCount < 1 && self.minerals() >= 125)
                 	{
                 		buildStuff(myUnit, UnitType.Buildings.Terran_Engineering_Bay);
+                		engCount++;
 //                		continue;
                 	}
                 	// build missile launchers
                 	else if(engCount > 0 && defCount < 5 && self.minerals() >= 75)
                 	{
                 		buildStuff(myUnit, UnitType.Buildings.Terran_Missile_Turret);
+                		defCount++;
 //                		continue;
                 	}
             		//default: go mine
@@ -223,6 +216,51 @@ public class TestBot1 extends DefaultBWListener {
     
     public static void main(String[] args) {
         new TestBot1().run();
+    }
+    
+    public void attack()
+    {
+    	Position vPosition = Position.Invalid;
+    	for(Unit vUnit : getGame().getAllUnits())
+    	{
+    		if(vUnit.getPlayer().getID() != self.getID())
+    		{
+    			vPosition = vUnit.getPosition();
+    			break;
+    		}
+    	}	
+    	if(vPosition==Position.Invalid)
+    	{
+    		for(BaseLocation vLocation:BWTA.getStartLocations())
+    		{
+    			if(!game.isExplored(vLocation.getTilePosition()))
+    			{
+    				vPosition = vLocation.getPosition();
+    				break;
+    			}
+    		}
+    	}
+//    	int vCounter = 0;
+//    	for(Unit vUnit:self.getUnits())
+//    	{
+//    		if(vUnit.isIdle() &&
+//    				!vUnit.getType().isWorker()&&
+//    				vUnit.canAttack())
+//    		{
+//    			vCounter++;
+//    		}
+//    			
+//    	}
+//    	if(vCounter<10)return;
+    	for(Unit vUnit:self.getUnits())
+    	{
+    		if(vUnit.isIdle()&&
+    				!vUnit.getType().isWorker()&&
+    				vUnit.canAttack())
+    		{
+    			if(vPosition != Position.Invalid) vUnit.attack(vPosition);
+    		}
+    	}
     }
     
  // Returns a suitable TilePosition to build a given building type near
