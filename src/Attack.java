@@ -2,6 +2,7 @@ import java.util.List;
 
 import bwapi.Position;
 import bwapi.Unit;
+import bwapi.UnitType;
 import bwta.BWTA;
 import bwta.BaseLocation;
 
@@ -65,10 +66,22 @@ public class Attack
 				if(enemyBuildings.isEmpty() && vPosition != Position.Invalid)
 				{
 					vUnit.attack(vPosition);
-					return;
 				}
-				vUnit.attack(enemyBuildings.get(0));
-				
+				else
+				{
+					vUnit.attack(enemyBuildings.get(0));
+				}
+			}
+			else if (vUnit.getType() == UnitType.Terran_Medic)
+			{
+				if(enemyBuildings.isEmpty() && vPosition != Position.Invalid)
+				{
+					vUnit.move(vPosition);
+				}
+				else
+				{
+					vUnit.move(vPosition);
+				}
 			}
 		}
 	}
