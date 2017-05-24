@@ -8,7 +8,7 @@ import bwta.BWTA;
 public class FirstBot extends DefaultBWListener
 {
 	public static final int maxWorker = 30;
-	public List<Unit> enemyBuildings = new ArrayList<>();
+	public List<EnemyUnit> enemyBuildings = new ArrayList<>();
 
 	private Mirror mirror = new Mirror();
 
@@ -60,7 +60,7 @@ public class FirstBot extends DefaultBWListener
 //        	getGame().sendText("black sheep wall"); // ganze karte sehen
 //        	getGame().sendText("power overwhelming"); // einheiten und gebäude unverwundbar
 
-            getGame().setLocalSpeed(10);
+            getGame().setLocalSpeed(13);
         }
 
         System.out.println("Analyzing map...");
@@ -78,7 +78,7 @@ public class FirstBot extends DefaultBWListener
     			&& unit.getPlayer().getID() != self.getID())
     	{
     		System.out.println("Neues Feindgebäude: " + unit.getType());
-    		enemyBuildings.add(unit);
+    		enemyBuildings.add(new EnemyUnit(unit));
     	}
     }
     
@@ -86,7 +86,6 @@ public class FirstBot extends DefaultBWListener
     public void onUnitDestroy(Unit unit) {
 
     }
-
 
     @Override
     public void onFrame() {
@@ -118,25 +117,30 @@ public class FirstBot extends DefaultBWListener
  	        	}
  	        }
  	        
- 	        for(Unit b : enemyBuildings)
+ 	        System.out.println("Feindgebäude: ");
+ 	        for(EnemyUnit b : enemyBuildings)
  	        {
- 	        	if(b.isVisible() && !b.exists())
+ 	        	System.out.print(b + ", " + b.getType() + "; ");
+ 	        	if(b.myUnit.isVisible() && !b.myUnit.exists())
  	        	{
  	        		enemyBuildings.remove(b);
  	        		System.out.println("Feindgebäude " + b + " existiert nicht mehr");
  	        	}
  	        }
+ 	        System.out.println("");
  	        
- 	        Attack.attack(enemyBuildings);
-
-
+ 	        if (getGame().getFrameCount() % 10 == 0)
+ 	        {
+ 	        	Attack.attack(enemyBuildings);
+ 	        }
+        	
  	        //Bauen:
-	    	if ((self.supplyTotal() - self.supplyUsed() < 3) && (self.minerals() >= 100)) 
+	    	if ((self.supplyTotal() - self.supplyUsed() <= 4) && (self.minerals() >= 100)) 
 	    	{
 	    		Build.build(UnitType.Terran_Supply_Depot, myPeopleCounter.getOrDefault(UnitType.Terran_SCV,0));
 	    	}
 
-	    	if (myBuildingsCounter.getOrDefault(UnitType.Terran_Barracks,0) < 4 && self.minerals() >= UnitType.Terran_Barracks.mineralPrice()) 
+	    	if (myBuildingsCounter.getOrDefault(UnitType.Terran_Barracks,0) < 3 && self.minerals() >= UnitType.Terran_Barracks.mineralPrice()) 
 	    	{
 	    		Build.build(UnitType.Terran_Barracks, myPeopleCounter.getOrDefault(UnitType.Terran_SCV,0));
 	    	}
@@ -151,10 +155,10 @@ public class FirstBot extends DefaultBWListener
 	    		Build.build(UnitType.Terran_Academy, myPeopleCounter.getOrDefault(UnitType.Terran_SCV,0));
 	    	}
 	    	
-	    	if (myBuildingsCounter.getOrDefault(UnitType.Terran_Factory,0) < 2 && self.minerals() >= UnitType.Terran_Factory.mineralPrice() && self.gas() >= UnitType.Terran_Factory.gasPrice())
-	    	{
-	    		Build.build(UnitType.Terran_Factory, myPeopleCounter.getOrDefault(UnitType.Terran_SCV,0));
-	    	}
+//	    	if (myBuildingsCounter.getOrDefault(UnitType.Terran_Factory,0) < 2 && self.minerals() >= UnitType.Terran_Factory.mineralPrice() && self.gas() >= UnitType.Terran_Factory.gasPrice())
+//	    	{
+//	    		Build.build(UnitType.Terran_Factory, myPeopleCounter.getOrDefault(UnitType.Terran_SCV,0));
+//	    	}
 
 
 

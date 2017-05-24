@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 import bwapi.Position;
@@ -11,9 +12,12 @@ import bwta.BaseLocation;
 public class Attack 
 {
 	
-	public static void attack(List<Unit> enemyBuildings)
+	
+	public static void attack(List<EnemyUnit> enemyBuildings)
 	{
 		Position vPosition = Position.Invalid;
+		List<Unit> attackTroops = new ArrayList<>();
+		
 		for( Unit vUnit : FirstBot.getSelf().getUnits())
 		{
 			if ( vUnit.getPlayer().getID() != FirstBot.getSelf().getID())
@@ -45,20 +49,39 @@ public class Attack
 			}
 		}
 		int vCounter = 0;
+	
 		for(Unit vUnit : FirstBot.getSelf().getUnits())
 		{
-			if(vUnit.isIdle() && !vUnit.getType().isWorker() && vUnit.canAttack() && FirstBot.getSelf().getStartLocation().getDistance(vUnit.getTilePosition()) <= 10)
+			if(!vUnit.getType().isWorker() && vUnit.canAttack())
 			{
-				++vCounter;
+				attackTroops.add(vUnit);
+				if (vUnit.isIdle() && FirstBot.getSelf().getStartLocation().getDistance(vUnit.getTilePosition()) <= 10) 
+					++vCounter;	
 			}
 		}
 		
-		if (vCounter < 10)
+		for(Unit vUnit : attackTroops)
 		{
-			return;
+			if(enemyBuildings.isEmpty() && vPosition != Position.Invalid)
+			{
+				if (vCounter < 10)
+				{
+					return;
+				}
+				vUnit.attack(vPosition);
+			}
+			else
+			{
+				
+				if (!(vUnit.getTarget() != null && vUnit.getTarget().getDistance(enemyBuildings.get(0).getPosition()) <= 10))
+				{
+					vUnit.attack(enemyBuildings.get(0).getPosition());
+				}
+				
+			}
 		}
 		
-		for(Unit vUnit : FirstBot.getSelf().getUnits())
+		/*for(Unit vUnit : FirstBot.getSelf().getUnits())
 		{
 		
 			if(vUnit.isIdle() && !vUnit.getType().isWorker() && vUnit.canAttack())
@@ -83,6 +106,6 @@ public class Attack
 					vUnit.move(vPosition);
 				}
 			}
-		}
+		}*/
 	}
 }
