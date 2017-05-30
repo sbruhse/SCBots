@@ -107,7 +107,7 @@ public class Attack
 				Collections.reverse(enemyUnits);
 				for(EnemyUnit u:enemyUnits)
 				{
-					if(u.unit.getType().isBuilding() || u.unit.isVisible())
+					if(u.getType().isBuilding() || u.unit.isVisible())
 					{
 						soldier.attack(u);
 						break;
