@@ -2,13 +2,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import bwapi.*;
 import bwta.BWTA;
 
 public class FirstBot extends DefaultBWListener
 {
 	public static final int maxWorker = 30;
-	public List<EnemyUnit> enemyBuildings = new ArrayList<>();
+	public List<EnemyUnit> enemyUnits = new ArrayList<>();
+	public List<MySoldier> mySoldiers = new ArrayList<>();
 
 	private Mirror mirror = new Mirror();
 
@@ -35,6 +37,12 @@ public class FirstBot extends DefaultBWListener
     @Override
     public void onUnitCreate(Unit unit) {
         System.out.println("New unit discovered " + unit.getType());
+        if(!(unit.getPlayer().getType() == PlayerType.Neutral ||  unit.getPlayer().getType() == PlayerType.None) 
+    			&& unit.getPlayer().getID() == self.getID() && !unit.getType().isBuilding() && !unit.getType().isWorker())
+    	{
+    		System.out.println("Neuer Soldat: " + unit.getType());
+    		mySoldiers.add(new MySoldier(unit));
+    	}
     }
 
     
@@ -42,6 +50,12 @@ public class FirstBot extends DefaultBWListener
     @Override
     public void onUnitComplete(Unit unit) {
     	
+    }
+    
+    @Override
+    public void onEnd(boolean b) {
+    	System.out.println("Ende!");
+    	System.out.println(enemyUnits);
     }
 
     @Override
@@ -60,7 +74,7 @@ public class FirstBot extends DefaultBWListener
 //        	getGame().sendText("black sheep wall"); // ganze karte sehen
 //        	getGame().sendText("power overwhelming"); // einheiten und gebäude unverwundbar
 
-            getGame().setLocalSpeed(13);
+            getGame().setLocalSpeed(15);
         }
 
         System.out.println("Analyzing map...");
@@ -73,18 +87,18 @@ public class FirstBot extends DefaultBWListener
     @Override
     public void onUnitDiscover(Unit unit)
     {
-    	if (unit.getType().isBuilding() 
-    			&& !(unit.getPlayer().getType() == PlayerType.Neutral ||  unit.getPlayer().getType() == PlayerType.None) 
+    	if (!(unit.getPlayer().getType() == PlayerType.Neutral ||  unit.getPlayer().getType() == PlayerType.None) 
     			&& unit.getPlayer().getID() != self.getID())
     	{
-    		System.out.println("Neues Feindgebäude: " + unit.getType());
-    		enemyBuildings.add(new EnemyUnit(unit));
+    		System.out.println("Neuer Feind: " + unit.getType());
+    		enemyUnits.add(new EnemyUnit(unit));
     	}
+    	
     }
     
     @Override
     public void onUnitDestroy(Unit unit) {
-
+    	
     }
 
     @Override
@@ -117,35 +131,39 @@ public class FirstBot extends DefaultBWListener
  	        	}
  	        }
  	        
- 	        System.out.println("Feindgebäude: ");
- 	        for(EnemyUnit b : enemyBuildings)
+ 	        for(EnemyUnit b : new ArrayList<>(enemyUnits))
  	        {
- 	        	System.out.print(b + ", " + b.getType() + "; ");
- 	        	if(b.myUnit.isVisible() && !b.myUnit.exists())
+ 	        	if(b.unit.isVisible() && !b.unit.exists())
  	        	{
- 	        		enemyBuildings.remove(b);
- 	        		System.out.println("Feindgebäude " + b + " existiert nicht mehr");
+ 	        		enemyUnits.remove(b);
+ 	        	}
+// 	        	System.out.print(b.unit.getType() + ", ");
+ 	        }
+// 	       System.out.println();
+ 	        for(MySoldier s: new ArrayList<>(mySoldiers))
+ 	        {
+ 	        	if(!s.myUnit.exists())
+ 	        	{
+ 	        		mySoldiers.remove(s);
  	        	}
  	        }
- 	        System.out.println("");
+ 	       
  	        
- 	        if (getGame().getFrameCount() % 10 == 0)
+ 	        if (getGame().getFrameCount() % 20 == 0)
  	        {
- 	        	Attack.attack(enemyBuildings);
+ 	        	if (getGame().getFrameCount() % 100 == 0)
+ 	 	        	enemyUnits = Attack.think(enemyUnits, true);
+ 	 	        else
+ 	 	        	enemyUnits = Attack.think(enemyUnits, true);
+ 	        	Attack.attack(enemyUnits, mySoldiers);
  	        }
-        	
  	        //Bauen:
-	    	if ((self.supplyTotal() - self.supplyUsed() <= 4) && (self.minerals() >= 100)) 
+	    	if ((self.supplyTotal() - self.supplyUsed() <= 5) && (self.minerals() >= 100)) 
 	    	{
 	    		Build.build(UnitType.Terran_Supply_Depot, myPeopleCounter.getOrDefault(UnitType.Terran_SCV,0));
 	    	}
-
-	    	if (myBuildingsCounter.getOrDefault(UnitType.Terran_Barracks,0) < 3 && self.minerals() >= UnitType.Terran_Barracks.mineralPrice()) 
-	    	{
-	    		Build.build(UnitType.Terran_Barracks, myPeopleCounter.getOrDefault(UnitType.Terran_SCV,0));
-	    	}
 	    	
-	    	if (myBuildingsCounter.getOrDefault(UnitType.Terran_Refinery,0) < 1 && myBuildingsCounter.getOrDefault(UnitType.Terran_Barracks,0) > 1 && self.minerals() >= UnitType.Terran_Refinery.mineralPrice())
+	    	if (myBuildingsCounter.getOrDefault(UnitType.Terran_Refinery,0) < 1 && myBuildingsCounter.getOrDefault(UnitType.Terran_Barracks,0) > 2 && self.minerals() >= UnitType.Terran_Refinery.mineralPrice())
 	    	{
 	    		Build.build(UnitType.Terran_Refinery, myPeopleCounter.getOrDefault(UnitType.Terran_SCV,0));
 	    	}
@@ -153,6 +171,11 @@ public class FirstBot extends DefaultBWListener
 	    	if (myBuildingsCounter.getOrDefault(UnitType.Terran_Academy,0) < 1 && self.minerals() >= UnitType.Terran_Academy.mineralPrice() && self.gas() >= UnitType.Terran_Academy.gasPrice())
 	    	{
 	    		Build.build(UnitType.Terran_Academy, myPeopleCounter.getOrDefault(UnitType.Terran_SCV,0));
+	    	}
+	    	
+	    	if ((myBuildingsCounter.getOrDefault(UnitType.Terran_Barracks,0) < 3 && self.minerals() >= UnitType.Terran_Barracks.mineralPrice())||self.minerals() >= 300) 
+	    	{
+	    		Build.build(UnitType.Terran_Barracks, myPeopleCounter.getOrDefault(UnitType.Terran_SCV,0));
 	    	}
 	    	
 //	    	if (myBuildingsCounter.getOrDefault(UnitType.Terran_Factory,0) < 2 && self.minerals() >= UnitType.Terran_Factory.mineralPrice() && self.gas() >= UnitType.Terran_Factory.gasPrice())
@@ -232,18 +255,38 @@ public class FirstBot extends DefaultBWListener
 	                }
 	            }
 	        }
+	        ausgabe();
     	}
     	catch( Exception vException )
     	{
        		vException.printStackTrace();
        	}
+    	
+    	
 
     }
 
 
 
 
-    public static void main(String[] args) {
+    private void ausgabe() {
+		for(EnemyUnit u : enemyUnits)
+		{
+			getGame().drawTextMap(u.getPosition(), "Weight:"+u.getWeight() + "\nUnitID" + u.unit.getID());
+		}
+		for(MySoldier s : mySoldiers)
+		{
+			if(s.target != null)
+			{
+				getGame().drawLineMap(s.myUnit.getPosition(), s.target.getPosition(), Color.Red);
+				getGame().drawTextMap(s.myUnit.getPosition(), "Target:"+s.target.unit.getID() );
+			}
+			
+		}
+		
+	}
+
+	public static void main(String[] args) {
         new FirstBot().run();
     }
 }

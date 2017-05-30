@@ -1,33 +1,54 @@
 import bwapi.*;
 
-public class EnemyUnit 
+public class EnemyUnit implements Comparable<EnemyUnit>
 {
-	public Unit myUnit;
+	public Unit unit;
 	private Position position;
 	private UnitType type;
+	private int weight = -1;
 	
 	public EnemyUnit(Unit vUnit) 
 	{
-		myUnit = vUnit;
+		unit = vUnit;
 		position = vUnit.getPosition();
 		type = vUnit.getType();
 	}
 	
 	public UnitType getType()
 	{
-		if (myUnit.exists())
+		if (unit.exists())
 		{
-			return myUnit.getType();
+			return unit.getType();
 		}
 		return type;
 	}
 	
 	public Position getPosition()
 	{
-		if (myUnit.exists())
+		if (unit.exists())
 		{
-			return myUnit.getPosition();
+			return unit.getPosition();
 		}
 		return position;
 	}
+	
+	public void setWeight(int weight)
+	{
+		this.weight = weight;
+	}
+	
+	public int getWeight()
+	{
+		return this.weight;
+	}
+
+	@Override
+	public int compareTo(EnemyUnit o) {
+		Integer myWeight = this.getWeight();
+		return myWeight.compareTo((Integer)o.getWeight());
+	}
+
+
+
 }
+
