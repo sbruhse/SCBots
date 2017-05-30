@@ -105,7 +105,16 @@ public class Attack
 			{
 //				System.out.println("Liste abarbeiten");
 				Collections.reverse(enemyUnits);
-				soldier.attack(enemyUnits.get(0));
+				for(EnemyUnit u:enemyUnits)
+				{
+					if(u.unit.getType().isBuilding() || u.unit.isVisible())
+					{
+						soldier.attack(u);
+						break;
+					}
+						
+				}
+				
 //				System.out.println(enemyUnits);
 //				for(EnemyUnit enemy : enemyUnits)
 //				{
