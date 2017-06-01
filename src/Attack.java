@@ -1,9 +1,13 @@
+import java.io.StreamTokenizer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import bwapi.Position;
+import bwapi.TilePosition;
 import bwapi.Unit;
 import bwapi.UnitType;
 import bwta.BWTA;
@@ -33,6 +37,8 @@ public class Attack
 					weight = weight + 3;
 				if (u.getType().canProduce())
 					weight++;
+				if (u.getType().isBuilding() && u.unit.canAttack())
+					weight = weight + 3;
 				
 				u.setWeight(weight);
 //				System.out.println("Unit bewertet: " + u.getType() + " Weight: " + weight + "/Distanz: " + u.getPosition().getDistance(FirstBot.getSelf().getStartLocation().getPoint().toPosition()));
@@ -48,58 +54,61 @@ public class Attack
 	
 	
 	
-	public static void attack(List<EnemyUnit> enemyUnits, List<MySoldier> mySoldiers)
+	public static void attack(List<EnemyUnit> enemyUnits, List<MySoldier> mySoldiers, TilePosition enemyLocation, Map<TilePosition, Boolean> startLocations)
 	{
 //		System.out.println("Angriff! " + FirstBot.getGame().getFrameCount());
 		
-		Position vPosition = Position.Invalid;
+		TilePosition vPosition = enemyLocation;
 		
 		for( Unit vUnit : FirstBot.getSelf().getUnits())
 		{
 			if ( vUnit.getPlayer().getID() != FirstBot.getSelf().getID())
 			{
-				vPosition = vUnit.getPosition();
+				vPosition = vUnit.getTilePosition();
 				break;
 			}
 		}
-		if(vPosition == Position.Invalid)
+		if(vPosition == TilePosition.Invalid)
 		{
 			for(BaseLocation vLocation : BWTA.getStartLocations())
 			{
 				if(!FirstBot.getGame().isExplored(vLocation.getTilePosition()))
 				{
-					vPosition = vLocation.getPosition();
+					vPosition = vLocation.getTilePosition();
 					break;
 				}
 			}
 		}
-		if(vPosition == Position.Invalid)
+		if(vPosition == TilePosition.Invalid)
 		{
 			for(BaseLocation vLocation : BWTA.getBaseLocations())
 			{
 				if(!FirstBot.getGame().isExplored(vLocation.getTilePosition()))
 				{
-					vPosition = vLocation.getPosition();
+					vPosition = vLocation.getTilePosition();
 					break;
 				}
 			}
 		}
 	
-//		System.out.println(mySoldiers);
-		//todo: machen
+
 		for(MySoldier soldier : mySoldiers)
 		{
 			
-			if(enemyUnits.isEmpty() && vPosition != Position.Invalid)
+			if(enemyUnits.isEmpty() /*&& vPosition == TilePosition.Invalid*/)
 			{
+				
+				
 //				System.out.println("Warten auf: Erster Angriff!");
-				if (mySoldiers.size() < 10)
+				
+				if (!startLocations.containsKey(mySoldiers.get(0).myUnit.getOrderTargetPosition().toTilePosition()))
 				{
-					return;
+					Attack.scout(mySoldiers.get(0).myUnit, startLocations);
 				}
+				
 				System.out.println("Erster Angriff!");
 //				java.awt.Toolkit.getDefaultToolkit().beep();
-				soldier.myUnit.attack(vPosition);
+//				soldier.myUnit.attack(vPosition.toPosition());
 			}
 			else
 			{
@@ -107,11 +116,13 @@ public class Attack
 				Collections.reverse(enemyUnits);
 				for(EnemyUnit u:enemyUnits)
 				{
-					if(u.getType().isBuilding() || u.unit.isVisible())
-					{
+					if(enemyUnits.size() < 10)
+						break;
+//					if(u.getType().isBuilding() || u.unit.isVisible())
+//					{
 						soldier.attack(u);
 						break;
-					}
+//					}
 						
 				}
 				
@@ -150,4 +161,27 @@ public class Attack
 			}
 		}*/
 	}
+	
+	public static TilePosition scout(Unit scout, Map<TilePosition, Boolean> startLocations)
+	{
+		System.out.println("Ich scoute!");
+		TilePosition target = null;
+		for(TilePosition s:FirstBot.getGame().getStartLocations())
+		{
+			if (!startLocations.get(s))
+			{
+				target = s;
+				break;
+			}
+		}
+		
+		if(scout.getDistance(target.toPosition()) <=  20)
+		{
+			startLocations.put(target, true);
+		}
+		scout.move(target.toPosition());
+		
+		return target;
+	}
+
 }

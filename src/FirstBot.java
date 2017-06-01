@@ -11,6 +11,9 @@ public class FirstBot extends DefaultBWListener
 	public static final int maxWorker = 30;
 	public List<EnemyUnit> enemyUnits = new ArrayList<>();
 	public List<MySoldier> mySoldiers = new ArrayList<>();
+	public Unit scout;
+	public Map<TilePosition, Boolean> startLocations = new HashMap<>();
+	public TilePosition enemyLocation = TilePosition.Invalid;
 
 	private Mirror mirror = new Mirror();
 
@@ -76,7 +79,10 @@ public class FirstBot extends DefaultBWListener
 
             getGame().setLocalSpeed(15);
         }
-
+        for(TilePosition l:FirstBot.getGame().getStartLocations())
+        {
+        	 startLocations.put(l, false);
+        }
         System.out.println("Analyzing map...");
         BWTA.readMap();
         BWTA.analyze();
@@ -105,6 +111,7 @@ public class FirstBot extends DefaultBWListener
     public void onFrame() {
     	try
     	{
+    		
     		Map<UnitType, Integer> myBuildingsCounter = new HashMap<>();
     		Map<UnitType, Integer> myPeopleCounter = new HashMap<>();
     		
@@ -133,7 +140,7 @@ public class FirstBot extends DefaultBWListener
  	        
  	        for(EnemyUnit b : new ArrayList<>(enemyUnits))
  	        {
- 	        	if(b.unit.isVisible() && !b.unit.exists())
+ 	        	if((b.unit.isVisible() && !b.unit.exists()) || (!b.unit.isVisible() && b.getType().isBuilding()))
  	        	{
  	        		enemyUnits.remove(b);
  	        	}
@@ -148,16 +155,47 @@ public class FirstBot extends DefaultBWListener
  	        	}
  	        }
  	       
+ 	        //Worker-Scouting:
+ 	        /*System.out.println("Scout:" + scout);
+ 	        if (scout == null)
+ 	        {
+ 	        	System.out.println("Möchte Scout zuweisen!");
+ 	        	for (Unit myUnit : FirstBot.getSelf().getUnits()) 
+ 	        	{
+ 	        		if (myUnit.getType() == UnitType.Terran_SCV) 
+ 	        		{
+ 	        			System.out.println("Ich weise jetzt zu!");
+ 	        			scout = myUnit;
+ 	        			
+ 	        			
+ 	        		}
+ 	        		else
+ 	        			System.out.println("Kein Worker...");
+ 	        		
+ 	        		System.out.println("Scout ist jetzt:" + scout);
+ 	        		break;
+ 	        	}
+ 	        }
+ 	        if(enemyUnits.isEmpty())
+ 	        {
+ 	        	enemyLocation = Attack.scout(scout, startLocations);
+ 	        }
+ 	        else
+ 	        {
+ 	        	scout = null;
+ 	        }
+ 	        */
  	        
+ 	        //Angriff:
  	        if (getGame().getFrameCount() % 20 == 0)
  	        {
  	        	if (getGame().getFrameCount() % 100 == 0)
  	 	        	enemyUnits = Attack.think(enemyUnits, true);
  	 	        else
  	 	        	enemyUnits = Attack.think(enemyUnits, true);
- 	        	Attack.attack(enemyUnits, mySoldiers);
+ 	        	Attack.attack(enemyUnits, mySoldiers, enemyLocation, startLocations);
  	        }
- 	        //Bauen:
+ 	        //Bauen: 	        
 	    	if ((self.supplyTotal() - self.supplyUsed() <= 5) && (self.minerals() >= 100)) 
 	    	{
 	    		Build.build(UnitType.Terran_Supply_Depot, myPeopleCounter.getOrDefault(UnitType.Terran_SCV,0));
@@ -173,7 +211,7 @@ public class FirstBot extends DefaultBWListener
 	    		Build.build(UnitType.Terran_Academy, myPeopleCounter.getOrDefault(UnitType.Terran_SCV,0));
 	    	}
 	    	
-	    	if ((myBuildingsCounter.getOrDefault(UnitType.Terran_Barracks,0) < 3 && self.minerals() >= UnitType.Terran_Barracks.mineralPrice())||self.minerals() >= 300) 
+	    	if ((myBuildingsCounter.getOrDefault(UnitType.Terran_Barracks,0) < 3 && self.minerals() >= UnitType.Terran_Barracks.mineralPrice())||self.minerals() >= 350) 
 	    	{
 	    		Build.build(UnitType.Terran_Barracks, myPeopleCounter.getOrDefault(UnitType.Terran_SCV,0));
 	    	}
@@ -188,7 +226,8 @@ public class FirstBot extends DefaultBWListener
 	        //iterate through my units,
 	        for (Unit vCurrentUnit : getSelf().getUnits())
 	        {
-	        	
+	        
+	        	//Gebäude reparieren
 	        	if (vCurrentUnit.getType().isBuilding() && vCurrentUnit.getInitialHitPoints() > vCurrentUnit.getHitPoints())
 	        	{
 	        		for (Unit myUnit : FirstBot.getSelf().getUnits()) 
@@ -204,7 +243,8 @@ public class FirstBot extends DefaultBWListener
 	        	if ( myPeopleCounter.getOrDefault(UnitType.Terran_SCV,0) < maxWorker &&
 	               	 vCurrentUnit.getType() == getSelf().getRace().getCenter() &&
 	               	 !vCurrentUnit.isTraining() &&
-	               	 getSelf().minerals() >= 50 ) {
+	               	 getSelf().minerals() >= 50
+	               	 ){
 	                   vCurrentUnit.train(getSelf().getRace().getWorker());
 	            }
 	        	
@@ -232,7 +272,7 @@ public class FirstBot extends DefaultBWListener
 	        	
 
 	        	//if it's a worker and it's idle, send it to the closest mineral patch
-	            if (vCurrentUnit.getType().isWorker() && vCurrentUnit.isIdle() && !vCurrentUnit.isSelected())
+	            if (vCurrentUnit.getType().isWorker() && vCurrentUnit.isIdle() && !vCurrentUnit.isSelected() && ( scout == null || vCurrentUnit.getID() != scout.getID()))
 	            {
 	                Unit closestMineral = null;
 
@@ -255,7 +295,11 @@ public class FirstBot extends DefaultBWListener
 	                }
 	            }
 	        }
-	        ausgabe();
+	        if (!getGame().isMultiplayer())
+	        {
+		        ausgabe();
+	        }
+
     	}
     	catch( Exception vException )
     	{
