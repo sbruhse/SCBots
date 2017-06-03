@@ -40,7 +40,7 @@ public class Attack
 					weight = weight + 3;
 				if (u.getType().canProduce())
 					weight++;
-				if (u.getType() == UnitType.Terran_Bunker || u.getType() == UnitType.Protoss_Photon_Cannon)
+				if ((u.getType() == UnitType.Terran_Bunker && u.unit.isLoaded()) || u.getType() == UnitType.Protoss_Photon_Cannon)
 					weight = weight + 3;
 				
 				u.setWeight(weight);
