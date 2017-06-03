@@ -44,11 +44,8 @@ public class Attack
 					weight = weight + 3;
 				
 				u.setWeight(weight);
-//				System.out.println("Unit bewertet: " + u.getType() + " Weight: " + weight + "/Distanz: " + u.getPosition().getDistance(FirstBot.getSelf().getStartLocation().getPoint().toPosition()));
 			}	
 		}
-		
-//		Collections.reverse(vEnemyUnits);
 		Collections.sort(vEnemyUnits);
 		
 		return vEnemyUnits;
@@ -58,9 +55,7 @@ public class Attack
 	
 	
 	public static void attack(List<EnemyUnit> enemyUnits, List<MySoldier> mySoldiers, TilePosition enemyLocation, Map<TilePosition, Boolean> startLocations)
-	{
-//		System.out.println("Angriff! " + FirstBot.getGame().getFrameCount());
-		
+	{		
 		TilePosition vPosition = enemyLocation;
 		
 		for( Unit vUnit : FirstBot.getSelf().getUnits())
@@ -98,24 +93,16 @@ public class Attack
 		for(MySoldier soldier : mySoldiers)
 		{
 			
-			if(enemyUnits.isEmpty() /*&& vPosition == TilePosition.Invalid*/)
+			if(enemyUnits.isEmpty())
 			{
-				
-				
-//				System.out.println("Warten auf: Erster Angriff!");
 				
 				if (!startLocations.containsKey(mySoldiers.get(0).myUnit.getOrderTargetPosition().toTilePosition()))
 				{
 					Attack.scout(mySoldiers.get(0).myUnit, startLocations);
 				}
-				
-				System.out.println("Erster Angriff!");
-//				java.awt.Toolkit.getDefaultToolkit().beep();
-//				soldier.myUnit.attack(vPosition.toPosition());
 			}
 			else
 			{
-//				System.out.println("Liste abarbeiten");
 				Collections.reverse(enemyUnits);
 				int unitsInBase = 0;
 				for (MySoldier s:mySoldiers)
@@ -129,48 +116,13 @@ public class Attack
 				{
 					if (unitsInBase <= 14 || u.getWeight() >= 8)
 						break;
-//					if(u.getType().isBuilding() || u.unit.isVisible())
-//					{
-						soldier.attack(u);
-						break;
-//					}
-						
+					
+					soldier.attack(u);
+					break;
 				}
 				
-//				System.out.println(enemyUnits);
-//				for(EnemyUnit enemy : enemyUnits)
-//				{
-//					soldier.attack(enemy);
-//				}
 			}
 		}
-		
-		/*for(Unit vUnit : FirstBot.getSelf().getUnits())
-		{
-		
-			if(vUnit.isIdle() && !vUnit.getType().isWorker() && vUnit.canAttack())
-			{
-				if(enemyBuildings.isEmpty() && vPosition != Position.Invalid)
-				{
-					vUnit.attack(vPosition);
-				}
-				else
-				{
-					vUnit.attack(enemyBuildings.get(0));
-				}
-			}
-			else if (vUnit.getType() == UnitType.Terran_Medic)
-			{
-				if(enemyBuildings.isEmpty() && vPosition != Position.Invalid)
-				{
-					vUnit.move(vPosition);
-				}
-				else
-				{
-					vUnit.move(vPosition);
-				}
-			}
-		}*/
 	}
 	
 	public static TilePosition scout(Unit scout, Map<TilePosition, Boolean> startLocations)
