@@ -117,9 +117,17 @@ public class Attack
 			{
 //				System.out.println("Liste abarbeiten");
 				Collections.reverse(enemyUnits);
+				int unitsInBase = 0;
+				for (MySoldier s:mySoldiers)
+				{
+					if(s.myUnit.getDistance(FirstBot.getSelf().getStartLocation().toPosition()) <= 1000)
+					{
+						unitsInBase++;
+					}
+				}
 				for(EnemyUnit u:enemyUnits)
 				{
-					if(enemyUnits.size() < 10)
+					if (unitsInBase <= 14 || u.getWeight() >= 8)
 						break;
 //					if(u.getType().isBuilding() || u.unit.isVisible())
 //					{
