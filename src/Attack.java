@@ -1,4 +1,5 @@
 import java.io.StreamTokenizer;
+import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,13 +32,15 @@ public class Attack
 					weight = 1;
 				if (u.getType().isBuilding())
 					weight = 3;
+				if (u.getType() == UnitType.Terran_Medic)
+					weight = 4;
 				if (u.getPosition().getDistance(FirstBot.getSelf().getStartLocation().getPoint().toPosition()) <= 900)
 					weight = weight + 2;
 				if (u.getPosition().getDistance(FirstBot.getSelf().getStartLocation().getPoint().toPosition()) <= 650)
 					weight = weight + 3;
 				if (u.getType().canProduce())
 					weight++;
-				if (u.getType().isBuilding() && u.unit.canAttack())
+				if (u.getType() == UnitType.Terran_Bunker || u.getType() == UnitType.Protoss_Photon_Cannon)
 					weight = weight + 3;
 				
 				u.setWeight(weight);
