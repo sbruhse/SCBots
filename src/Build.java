@@ -7,10 +7,12 @@ public class Build
 {
 	public static void build(UnitType unittype, int workerCount)
 	{
+		int maxDistanceToBase = 800;
 		for (Unit myUnit : FirstBot.getSelf().getUnits()) {
-			if (myUnit.getType() == UnitType.Terran_SCV && (workerCount >= FirstBot.maxWorker || myUnit.isIdle())) 
+			if (myUnit.getType() == UnitType.Terran_SCV && (workerCount >= FirstBot.maxWorker || myUnit.isIdle()) && myUnit.getDistance(FirstBot.getSelf().getStartLocation().toPosition()) < maxDistanceToBase) 
 			{
-				TilePosition buildTile = getBuildTile(myUnit, unittype, FirstBot.getSelf().getStartLocation());
+				//TilePosition buildTile = getBuildTile(myUnit, unittype, FirstBot.getSelf().getStartLocation());
+				TilePosition buildTile = getBuildTile(myUnit, unittype, myUnit.getTilePosition());
 				if (buildTile != null) 
 				{
 					myUnit.build(unittype, buildTile);
@@ -22,7 +24,7 @@ public class Build
 	
     public static TilePosition getBuildTile(Unit builder, UnitType buildingType, TilePosition aroundTile) {
     	TilePosition ret = null;
-    	int maxDist = 3;
+    	int maxDist = 2;
     	int stopDist = 40;
 
     	// Refinery, Assimilator, Extractor
@@ -43,22 +45,12 @@ public class Build
     					boolean unitsInWay = false;
     					for (Unit u : FirstBot.getGame().getAllUnits()) {
     						if (u.getID() == builder.getID()) continue;
-    						if ((Math.abs(u.getTilePosition().getX()-i) < 4) && (Math.abs(u.getTilePosition().getY()-j) < 4)) unitsInWay = true;
+    						if ((Math.abs(u.getTilePosition().getX()-i) < 3) && (Math.abs(u.getTilePosition().getY()-j) < 3)) unitsInWay = true;
     					}
-//    					if (!unitsInWay) {
+    					if (!unitsInWay) {
     						return new TilePosition(i, j);
-//    					}
-    					// creep for Zerg
-//    					if (buildingType.requiresCreep()) {
-//    						boolean creepMissing = false;
-//    						for (int k=i; k<=i+buildingType.tileWidth(); k++) {
-//    							for (int l=j; l<=j+buildingType.tileHeight(); l++) {
-//    								if (!game.hasCreep(k, l)) creepMissing = true;
-//    								break;
-//    							}
-//    						}
-//    						if (creepMissing) continue;
-//    					}
+    					}
+    					
     				}
     			}
     		}
