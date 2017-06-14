@@ -54,7 +54,7 @@ public class Attack
 	
 	
 	
-	public static void attack(List<EnemyUnit> enemyUnits, List<MySoldier> mySoldiers, TilePosition enemyLocation, Map<TilePosition, Boolean> startLocations)
+	public static void attack(List<EnemyUnit> enemyUnits, List<SoldierGroup> mySoldiers, TilePosition enemyLocation, Map<TilePosition, Boolean> startLocations)
 	{		
 		TilePosition vPosition = enemyLocation;
 		
@@ -90,38 +90,36 @@ public class Attack
 		}
 	
 
-		for(MySoldier soldier : mySoldiers)
+		for(SoldierGroup soldierGroup : mySoldiers)
 		{
 			
-			if(enemyUnits.isEmpty())
-			{
-				
-				if (!startLocations.containsKey(mySoldiers.get(0).myUnit.getOrderTargetPosition().toTilePosition()))
-				{
-					Attack.scout(mySoldiers.get(0).myUnit, startLocations);
-				}
-			}
-			else
-			{
+//			if(enemyUnits.isEmpty())
+//			{
+//				
+//				if (!startLocations.containsKey(mySoldiers.get(0).myUnit.getOrderTargetPosition().toTilePosition()))
+//				{
+//					Attack.scout(mySoldiers.get(0).myUnit, startLocations);
+//				}
+//			}
+//			else
+//			{
 				Collections.reverse(enemyUnits);
-				int unitsInBase = 0;
-				for (MySoldier s:mySoldiers)
+				for(EnemyUnit u:enemyUnits)
 				{
-					if(s.myUnit.getDistance(FirstBot.getSelf().getStartLocation().toPosition()) <= 1000)
-					{
-						unitsInBase++;
-					}
+					if (!soldierGroup.isFull())
+						break;
+					soldierGroup.setGrouping(false);
+					break;
 				}
 				for(EnemyUnit u:enemyUnits)
 				{
-					if (unitsInBase <= 14 || u.getWeight() >= 8)
+					if (soldierGroup.getGrouping())
 						break;
-					
-					soldier.attack(u);
+					soldierGroup.attack(u);
 					break;
 				}
 				
-			}
+//			}
 		}
 	}
 	
