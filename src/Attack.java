@@ -34,6 +34,8 @@ public class Attack
 					weight = 3;
 				if (u.getType() == UnitType.Terran_Medic)
 					weight = 4;
+				if (u.getType() == UnitType.Protoss_Archon)
+					weight = 6;
 				if (u.getPosition().getDistance(FirstBot.getSelf().getStartLocation().getPoint().toPosition()) <= 900)
 					weight = weight + 2;
 				if (u.getPosition().getDistance(FirstBot.getSelf().getStartLocation().getPoint().toPosition()) <= 650)
@@ -129,7 +131,7 @@ public class Attack
 		TilePosition target = null;
 		for(TilePosition s:FirstBot.getGame().getStartLocations())
 		{
-			if (!startLocations.get(s))
+			if (!startLocations.get(s) && s != FirstBot.getSelf().getStartLocation())
 			{
 				target = s;
 				break;

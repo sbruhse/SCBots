@@ -169,12 +169,12 @@ public class FirstBot extends DefaultBWListener
  	        
  	        for(EnemyUnit b : new ArrayList<>(enemyUnits))
  	        {
- 	        	if((b.unit.isVisible() && !b.unit.exists() && !b.getType().isBuilding()))
- 	        	{
- 	        		enemyUnits.remove(b);
- 	        	}
+				if((b.unit.isVisible() && !b.unit.exists()))
+				{
+					enemyUnits.remove(b);
+				}
 // 	        	System.out.print(b.unit.getType() + ", ");
- 	        }
+			}
 // 	       System.out.println();
  	        
  	        //Update SoldierGroups
@@ -189,6 +189,9 @@ public class FirstBot extends DefaultBWListener
  	 	        		soldierGroups.remove(sg);
  	 	        }
  	        }
+
+ 	        if(enemyUnits.isEmpty())
+ 	        	scout = null;
  	        
  	       
  	        //Worker-Scouting:
@@ -206,7 +209,7 @@ public class FirstBot extends DefaultBWListener
  	        			
  	        		}
  	        		else
- 	        			System.out.println("Kein Worker...");
+// 	        			System.out.println("Kein Worker...");
  	        		
 // 	        		System.out.println("Scout ist jetzt:" + scout);
  	        		break;
@@ -363,7 +366,7 @@ public class FirstBot extends DefaultBWListener
 		}
 		for(EnemyUnit u : enemyUnits)
 		{
-			getGame().drawTextMap(u.getPosition(), "Weight:" + u.getWeight() + "\nUnitID" + u.unit.getID());
+			getGame().drawTextMap(u.getPosition(), "Weight:" + u.getWeight() + "\nUnitID" + u.unit.getID() + "\nType:" +u.getType());
 		}
 		
 	}
