@@ -67,9 +67,7 @@ public class FirstBot extends DefaultBWListener
 						foundGroup = true;
 						break;
 					}
-
 				}
-
 			}
 			if(!foundGroup)
 				soldierGroups.add(new SoldierGroup(soldier));
@@ -200,8 +198,6 @@ public class FirstBot extends DefaultBWListener
  	        		if (myUnit.getType() == UnitType.Terran_SCV) 
  	        		{
  	        			scout = myUnit;
- 	        			
- 	        			
  	        		}
 
  	        		break;
@@ -219,10 +215,7 @@ public class FirstBot extends DefaultBWListener
  	        //Angriff:
  	        if (getGame().getFrameCount() % 20 == 0)
  	        {
- 	        	if (getGame().getFrameCount() % 100 == 0)
- 	 	        	enemyUnits = Attack.think(enemyUnits, true);
- 	 	        else
- 	 	        	enemyUnits = Attack.think(enemyUnits, true);
+				enemyUnits = Attack.think(enemyUnits, true);
  	        	Attack.attack(enemyUnits, soldierGroups, enemyLocation, startLocations);
  	        }
  	        //Bauen: 	        
@@ -275,7 +268,7 @@ public class FirstBot extends DefaultBWListener
 	        	if ( vCurrentUnit.getType() == UnitType.Terran_Barracks &&
 		        		 vCurrentUnit.isCompleted() &&
 		               	 !vCurrentUnit.isTraining() &&
-		               	 myPeopleCounter.getOrDefault(UnitType.Terran_Medic,0) < 4 &&
+		               	 myPeopleCounter.getOrDefault(UnitType.Terran_Medic,0) < 3 &&
 		               	 getSelf().minerals() >= UnitType.Terran_Medic.mineralPrice() &&
 		               	 getSelf().gas() >= UnitType.Terran_Medic.gasPrice() 
 	        			)
