@@ -94,34 +94,21 @@ public class Attack
 
 		for(SoldierGroup soldierGroup : mySoldiers)
 		{
-			
-//			if(enemyUnits.isEmpty())
-//			{
-//				
-//				if (!startLocations.containsKey(mySoldiers.get(0).myUnit.getOrderTargetPosition().toTilePosition()))
-//				{
-//					Attack.scout(mySoldiers.get(0).myUnit, startLocations);
-//				}
-//			}
-//			else
-//			{
-				Collections.reverse(enemyUnits);
-				for(EnemyUnit u:enemyUnits)
-				{
-					if (!soldierGroup.isFull())
-						break;
-					soldierGroup.setGrouping(false);
+			Collections.reverse(enemyUnits);
+			for(EnemyUnit u:enemyUnits)
+			{
+				if (!soldierGroup.isFull())
 					break;
-				}
-				for(EnemyUnit u:enemyUnits)
-				{
-					if (soldierGroup.getGrouping())
-						break;
-					soldierGroup.attack(u);
+				soldierGroup.setGrouping(false);
+				break;
+			}
+			for(EnemyUnit u:enemyUnits)
+			{
+				if (soldierGroup.getGrouping())
 					break;
-				}
-				
-//			}
+				soldierGroup.attack(u);
+				break;
+			}
 		}
 	}
 	

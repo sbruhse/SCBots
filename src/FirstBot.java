@@ -10,7 +10,6 @@ public class FirstBot extends DefaultBWListener
 {
 	public static final int maxWorker = 30;
 	public List<EnemyUnit> enemyUnits = new ArrayList<>();
-	//public List<MySoldier> mySoldiers = new ArrayList<>();
 	public Unit scout;
 	public Map<TilePosition, Boolean> startLocations = new HashMap<>();
 	public TilePosition enemyLocation = TilePosition.Invalid;
@@ -173,9 +172,7 @@ public class FirstBot extends DefaultBWListener
 				{
 					enemyUnits.remove(b);
 				}
-// 	        	System.out.print(b.unit.getType() + ", ");
 			}
-// 	       System.out.println();
  	        
  	        //Update SoldierGroups
  	        if (!soldierGroups.isEmpty())
@@ -190,28 +187,23 @@ public class FirstBot extends DefaultBWListener
  	 	        }
  	        }
 
- 	        if(enemyUnits.isEmpty())
- 	        	scout = null;
+
  	        
  	       
  	        //Worker-Scouting:
- 	        //System.out.println("Scout:" + scout);
+			if(enemyUnits.isEmpty())
+				scout = null;
  	        if (scout == null)
  	        {
-// 	        	System.out.println("Möchte Scout zuweisen!");
  	        	for (Unit myUnit : FirstBot.getSelf().getUnits()) 
  	        	{
  	        		if (myUnit.getType() == UnitType.Terran_SCV) 
  	        		{
-// 	        			System.out.println("Ich weise jetzt zu!");
  	        			scout = myUnit;
  	        			
  	        			
  	        		}
- 	        		else
-// 	        			System.out.println("Kein Worker...");
- 	        		
-// 	        		System.out.println("Scout ist jetzt:" + scout);
+
  	        		break;
  	        	}
  	        }
@@ -253,19 +245,13 @@ public class FirstBot extends DefaultBWListener
 	    	{
 	    		Build.build(UnitType.Terran_Barracks, myPeopleCounter.getOrDefault(UnitType.Terran_SCV,0));
 	    	}
-	    	
-//	    	if (myBuildingsCounter.getOrDefault(UnitType.Terran_Factory,0) < 2 && self.minerals() >= UnitType.Terran_Factory.mineralPrice() && self.gas() >= UnitType.Terran_Factory.gasPrice())
-//	    	{
-//	    		Build.build(UnitType.Terran_Factory, myPeopleCounter.getOrDefault(UnitType.Terran_SCV,0));
-//	    	}
-
 
 
 	        //iterate through my units,
 	        for (Unit vCurrentUnit : getSelf().getUnits())
 	        {
 	        
-	        	//Geb�ude reparieren
+	        	//Gebäude reparieren
 	        	if (vCurrentUnit.getType().isBuilding() && vCurrentUnit.getInitialHitPoints() > vCurrentUnit.getHitPoints())
 	        	{
 	        		for (Unit myUnit : FirstBot.getSelf().getUnits()) 
