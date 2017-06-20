@@ -144,7 +144,7 @@ public class FirstBot extends DefaultBWListener
     		Map<UnitType, Integer> myBuildingsCounter = new HashMap<>();
     		Map<UnitType, Integer> myPeopleCounter = new HashMap<>();
     		
- 	        //Z�hlen:
+ 	        //Zählen:
  	        for (Unit vCurrentUnit : getSelf().getUnits())
  	        {
  	        	if (vCurrentUnit.getType().isBuilding() && vCurrentUnit.getPlayer().getID() == getSelf().getID())
@@ -195,7 +195,7 @@ public class FirstBot extends DefaultBWListener
  	        //System.out.println("Scout:" + scout);
  	        if (scout == null)
  	        {
-// 	        	System.out.println("M�chte Scout zuweisen!");
+// 	        	System.out.println("Möchte Scout zuweisen!");
  	        	for (Unit myUnit : FirstBot.getSelf().getUnits()) 
  	        	{
  	        		if (myUnit.getType() == UnitType.Terran_SCV) 
