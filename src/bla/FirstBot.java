@@ -1,3 +1,5 @@
+package bla;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +14,7 @@ public class FirstBot extends DefaultBWListener
 	public List<EnemyUnit> enemyUnits = new ArrayList<>();
 	public Unit scout;
 	public Map<TilePosition, Boolean> startLocations = new HashMap<>();
-	public TilePosition enemyLocation = TilePosition.Invalid;
+	public bwapi.TilePosition enemyLocation = TilePosition.Invalid;
 	public List<SoldierGroup> soldierGroups = new ArrayList<>();
 
 	private Mirror mirror = new Mirror();
@@ -98,9 +100,10 @@ public class FirstBot extends DefaultBWListener
 
             getGame().setLocalSpeed(15);
         }
-        for(TilePosition l:FirstBot.getGame().getStartLocations())
+        for(bwapi.TilePosition l:FirstBot.getGame().getStartLocations())
         {
-        	 startLocations.put(l, false);
+        	if(!(l.getX() == getSelf().getStartLocation().getX() && l.getY() == getSelf().getStartLocation().getY()))
+        	 	startLocations.put(new TilePosition(l), false);
         }
         System.out.println("Analyzing map...");
         BWTA.readMap();
@@ -166,7 +169,7 @@ public class FirstBot extends DefaultBWListener
  	        
  	        for(EnemyUnit b : new ArrayList<>(enemyUnits))
  	        {
-				if((b.unit.isVisible() && !b.unit.exists()))
+				if(!b.unit.exists() && getGame().isVisible(b.getPosition().toTilePosition()))
 				{
 					enemyUnits.remove(b);
 				}
@@ -186,40 +189,47 @@ public class FirstBot extends DefaultBWListener
  	        }
 
 
- 	        
- 	       
- 	        //Worker-Scouting:
-			if(enemyUnits.isEmpty())
-				scout = null;
- 	        if (scout == null)
- 	        {
- 	        	for (Unit myUnit : FirstBot.getSelf().getUnits()) 
- 	        	{
- 	        		if (myUnit.getType() == UnitType.Terran_SCV) 
- 	        		{
- 	        			scout = myUnit;
- 	        		}
 
- 	        		break;
- 	        	}
- 	        }
- 	        if(enemyUnits.isEmpty())
- 	        {
- 	        	enemyLocation = Attack.scout(scout, startLocations);
- 	        }
- 	        else
- 	        {
- 	        	scout = null;
- 	        }
- 	        
- 	        //Angriff:
- 	        if (getGame().getFrameCount() % 20 == 0)
- 	        {
-				enemyUnits = Attack.think(enemyUnits, true);
- 	        	Attack.attack(enemyUnits, soldierGroups, enemyLocation, startLocations);
- 	        }
+			//Worker-Scouting:
+ 	        if (getSelf().supplyUsed() >= 16)
+			{
+				if(enemyUnits.isEmpty())
+					scout = null;
+				if (scout == null)
+				{
+					for (Unit myUnit : FirstBot.getSelf().getUnits())
+					{
+						if (myUnit.getType() == UnitType.Terran_SCV)
+						{
+							scout = myUnit;
+						}
+
+						break;
+					}
+				}
+				if(enemyUnits.isEmpty())
+				{
+					enemyLocation = Attack.scout(scout, startLocations);
+				}
+				else
+				{
+					scout = null;
+				}
+			}
+
+			//Angriff:
+ 	        if(!enemyUnits.isEmpty())
+			{
+				if (getGame().getFrameCount() % 20 == 0)
+				{
+					enemyUnits = Attack.think(enemyUnits, true);
+					Attack.attack(enemyUnits, soldierGroups, new TilePosition(enemyLocation), startLocations);
+				}
+			}
+
+
  	        //Bauen: 	        
-	    	if ((self.supplyTotal() - self.supplyUsed() <= 5) && (self.minerals() >= 100)) 
+	    	if ((self.supplyTotal() - self.supplyUsed() <= 10) && (self.minerals() >= 100))
 	    	{
 	    		Build.build(UnitType.Terran_Supply_Depot, myPeopleCounter.getOrDefault(UnitType.Terran_SCV,0));
 	    	}

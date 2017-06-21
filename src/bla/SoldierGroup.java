@@ -1,3 +1,5 @@
+package bla;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,7 +89,7 @@ public class SoldierGroup
 				for(MySoldier s : soldiers)
 				{
 					Position positionToAttack = target.getPosition();
-					if(s.myUnit.getOrderTargetPosition().getDistance(positionToAttack) > 20)
+					if(s.myUnit.getOrderTargetPosition().getDistance(positionToAttack) > s.myUnit.getType().sightRange())
 					{
 						System.out.println("Attacke!");
 						if (s.myUnit.canAttack()) s.myUnit.attack(positionToAttack);

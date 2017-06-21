@@ -1,3 +1,5 @@
+package bla;
+
 import bwapi.*;
 
 public class EnemyUnit implements Comparable<EnemyUnit>

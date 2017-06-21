@@ -1,14 +1,9 @@
-import java.io.StreamTokenizer;
-import java.time.temporal.TemporalAmount;
-import java.util.ArrayList;
-import java.util.Collection;
+package bla;
+
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import bwapi.Position;
-import bwapi.TilePosition;
 import bwapi.Unit;
 import bwapi.UnitType;
 import bwta.BWTA;
@@ -36,6 +31,8 @@ public class Attack
 					weight = 4;
 				if (u.getType() == UnitType.Protoss_Archon)
 					weight = 6;
+				if (u.getType() == UnitType.Zerg_Overlord)
+					weight = 4;
 				if (u.getPosition().getDistance(FirstBot.getSelf().getStartLocation().getPoint().toPosition()) <= 900)
 					weight = weight + 2;
 				if (u.getPosition().getDistance(FirstBot.getSelf().getStartLocation().getPoint().toPosition()) <= 650)
@@ -64,7 +61,7 @@ public class Attack
 		{
 			if ( vUnit.getPlayer().getID() != FirstBot.getSelf().getID())
 			{
-				vPosition = vUnit.getTilePosition();
+				vPosition = new TilePosition(vUnit.getTilePosition());
 				break;
 			}
 		}
@@ -74,7 +71,7 @@ public class Attack
 			{
 				if(!FirstBot.getGame().isExplored(vLocation.getTilePosition()))
 				{
-					vPosition = vLocation.getTilePosition();
+					vPosition = new TilePosition(vLocation.getTilePosition());
 					break;
 				}
 			}
@@ -85,7 +82,7 @@ public class Attack
 			{
 				if(!FirstBot.getGame().isExplored(vLocation.getTilePosition()))
 				{
-					vPosition = vLocation.getTilePosition();
+					vPosition = new TilePosition(vLocation.getTilePosition());
 					break;
 				}
 			}
@@ -116,11 +113,12 @@ public class Attack
 	{
 		System.out.println("Ich scoute!");
 		TilePosition target = null;
-		for(TilePosition s:FirstBot.getGame().getStartLocations())
+		System.out.println(startLocations);
+		for(bwapi.TilePosition s:FirstBot.getGame().getStartLocations())
 		{
-			if (!startLocations.get(s) && s != FirstBot.getSelf().getStartLocation())
+			if (startLocations.get(new TilePosition(s)) != null && !startLocations.get(new TilePosition(s)))
 			{
-				target = s;
+				target = new TilePosition(s);
 				break;
 			}
 		}

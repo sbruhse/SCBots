@@ -1,3 +1,4 @@
+package bla;
 
 import bwapi.TilePosition;
 import bwapi.Unit;
@@ -11,7 +12,7 @@ public class Build
 		for (Unit myUnit : FirstBot.getSelf().getUnits()) {
 			if (myUnit.getType() == UnitType.Terran_SCV && (workerCount >= FirstBot.maxWorker || myUnit.isIdle()) && myUnit.getDistance(FirstBot.getSelf().getStartLocation().toPosition()) < maxDistanceToBase) 
 			{
-				//TilePosition buildTile = getBuildTile(myUnit, unittype, FirstBot.getSelf().getStartLocation());
+				//bla.TilePosition buildTile = getBuildTile(myUnit, unittype, bla.FirstBot.getSelf().getStartLocation());
 				TilePosition buildTile = getBuildTile(myUnit, unittype, myUnit.getTilePosition());
 				if (buildTile != null) 
 				{

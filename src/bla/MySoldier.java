@@ -1,4 +1,5 @@
-import bwapi.Position;
+package bla;
+
 import bwapi.Unit;
 
 public class MySoldier 
