@@ -129,11 +129,11 @@ public class FirstBot extends DefaultBWListener
     int vorherig = 0;
     @Override
     public void onFrame() {
-    	if (getGame().getFrameCount() % 500 == 0)
-    	{
-    		System.out.println("Wachstum: " + Integer.toString(getSelf().gatheredMinerals() - vorherig));
-        	vorherig = getSelf().gatheredMinerals();
-    	}
+//    	if (getGame().getFrameCount() % 500 == 0)
+//    	{
+//    		System.out.println("Wachstum: " + Integer.toString(getSelf().gatheredMinerals() - vorherig));
+//        	vorherig = getSelf().gatheredMinerals();
+//    	}
     	
     	try
     	{
@@ -178,7 +178,7 @@ public class FirstBot extends DefaultBWListener
  	        	for(SoldierGroup sg : new ArrayList<>(soldierGroups))
  	 	        {
  	        		
- 	 	        	System.out.println("soldierGroupSize: " + sg.getSoldierCount());
+// 	 	        	System.out.println("soldierGroupSize: " + sg.getSoldierCount());
  	 	        	sg.updateSoldierStatus();
  	 	        	if(sg.isEmpty())
  	 	        		soldierGroups.remove(sg);
@@ -261,7 +261,8 @@ public class FirstBot extends DefaultBWListener
 	               	 vCurrentUnit.getType() == getSelf().getRace().getCenter() &&
 	               	 !vCurrentUnit.isTraining() &&
 	               	 getSelf().minerals() >= 50
-	               	 ){
+	               	 )
+	        	{
 	                   vCurrentUnit.train(getSelf().getRace().getWorker());
 	            }
 	        	
