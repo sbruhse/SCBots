@@ -193,8 +193,8 @@ public class FirstBot extends DefaultBWListener
 			//Worker-Scouting:
  	        if (getSelf().supplyUsed() >= 16)
 			{
-				if(enemyUnits.isEmpty())
-					scout = null;
+				//if(enemyUnits.isEmpty())
+				//	scout = null;
 				if (scout == null)
 				{
 					for (Unit myUnit : FirstBot.getSelf().getUnits())
@@ -202,9 +202,10 @@ public class FirstBot extends DefaultBWListener
 						if (myUnit.getType() == UnitType.Terran_SCV)
 						{
 							scout = myUnit;
+							break;
 						}
 
-						break;
+
 					}
 				}
 				if(enemyUnits.isEmpty())
@@ -279,7 +280,7 @@ public class FirstBot extends DefaultBWListener
 	        	if ( vCurrentUnit.getType() == UnitType.Terran_Barracks &&
 		        		 vCurrentUnit.isCompleted() &&
 		               	 !vCurrentUnit.isTraining() &&
-		               	 myPeopleCounter.getOrDefault(UnitType.Terran_Medic,0) < 3 &&
+		               	 myPeopleCounter.getOrDefault(UnitType.Terran_Medic,0) < myPeopleCounter.getOrDefault(UnitType.Terran_Marine,0)/3 &&
 		               	 getSelf().minerals() >= UnitType.Terran_Medic.mineralPrice() &&
 		               	 getSelf().gas() >= UnitType.Terran_Medic.gasPrice() 
 	        			)
@@ -323,10 +324,10 @@ public class FirstBot extends DefaultBWListener
 	                }
 	            }
 	        }
-	        if (!getGame().isMultiplayer())
-	        {
+	        //if (!getGame().isMultiplayer())
+	        //{
 		        ausgabe();
-	        }
+	        //}
 
     	}
     	catch( Exception vException )
