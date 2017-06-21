@@ -33,6 +33,8 @@ public class Attack
 					weight = 6;
 				if (u.getType() == UnitType.Zerg_Overlord)
 					weight = 4;
+				if (u.getType() == UnitType.Protoss_Dark_Templar)
+					weight = 4;
 				if (u.getPosition().getDistance(FirstBot.getSelf().getStartLocation().getPoint().toPosition()) <= 900)
 					weight = weight + 2;
 				if (u.getPosition().getDistance(FirstBot.getSelf().getStartLocation().getPoint().toPosition()) <= 650)

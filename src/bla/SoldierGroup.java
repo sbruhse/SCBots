@@ -8,7 +8,7 @@ import bwapi.Position;
 public class SoldierGroup 
 {
 	private List<MySoldier> soldiers = new ArrayList<>();
-	public static final int maxGroupSize = 12;
+	public static final int maxGroupSize = 8;
 	EnemyUnit target = null;
 	private boolean grouping = true;
 	
