@@ -188,7 +188,11 @@ public class FirstBot extends DefaultBWListener
  	 	        }
  	        }
 
-
+			if (getGame().getFrameCount() % 3300 == 0 && SoldierGroup.maxGroupSize <= 13)
+			{
+				SoldierGroup.maxGroupSize++;
+				System.out.println("Erhöht " + SoldierGroup.maxGroupSize);
+			}
 
 			//Worker-Scouting:
  	        if (getSelf().supplyUsed() >= 16)

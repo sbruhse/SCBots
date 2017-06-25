@@ -35,6 +35,8 @@ public class Attack
 					weight = 4;
 				if (u.getType() == UnitType.Protoss_Dark_Templar)
 					weight = 4;
+				if (u.getType() == UnitType.Zerg_Lurker && !u.unit.isBurrowed())
+					weight = 8;
 				if (u.getPosition().getDistance(FirstBot.getSelf().getStartLocation().getPoint().toPosition()) <= 900)
 					weight = weight + 2;
 				if (u.getPosition().getDistance(FirstBot.getSelf().getStartLocation().getPoint().toPosition()) <= 650)
